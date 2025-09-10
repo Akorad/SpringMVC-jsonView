@@ -4,8 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.Akorad.dto.Views;
 
 import java.util.List;
@@ -13,11 +12,11 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@Table(name = "users")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
     @JsonView(Views.UserSummary.class)
     private Long id;
 
@@ -33,4 +32,5 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonView(Views.UserDetails.class)
     private List<Order> orders;
+
 }

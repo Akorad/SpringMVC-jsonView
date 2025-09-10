@@ -43,7 +43,7 @@ public class OrderServiceImplTest {
 
         order = new Order();
         order.setId(1L);
-        order.setAmount(BigDecimal.valueOf(100.0));
+        order.setAmount(new BigDecimal("100.0"));
         order.setStatus("NEW");
         order.setUser(user);
     }
@@ -55,7 +55,7 @@ public class OrderServiceImplTest {
         List<Order> result = orderService.getAllOrders();
 
         assertThat(result).hasSize(1);
-        assertThat(result.getFirst().getAmount()).isEqualTo(100.0);
+        assertThat(result.getFirst().getAmount()).isEqualByComparingTo("100.0");
         verify(orderRepository, times(1)).findAll();
     }
 
@@ -101,7 +101,7 @@ public class OrderServiceImplTest {
     @Test
     void testUpdateOrder_Success() {
         Order orderDetails = new Order();
-        orderDetails.setAmount(BigDecimal.valueOf(200.0));
+        orderDetails.setAmount(new BigDecimal("200.0"));
         orderDetails.setStatus("UPDATED");
 
         when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
@@ -109,7 +109,7 @@ public class OrderServiceImplTest {
 
         Order result = orderService.updateOrder(1L, orderDetails);
 
-        assertThat(result.getAmount()).isEqualTo(200.0);
+        assertThat(result.getAmount()).isEqualByComparingTo("200.0");
         assertThat(result.getStatus()).isEqualTo("UPDATED");
     }
 

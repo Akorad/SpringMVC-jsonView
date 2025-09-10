@@ -14,13 +14,13 @@ import java.math.BigDecimal;
 @Entity
 @Getter
 @Setter
+@Table(name = "orders")
 public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonView(Views.UserDetails.class)
     private Long id;
-
 
     @NotBlank(message = "Название продукта не может быть пустым")
     @JsonView(Views.UserDetails.class)

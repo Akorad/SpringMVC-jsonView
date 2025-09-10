@@ -1,4 +1,4 @@
-package org.Akorad;
+package org.Akorad.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.validation.Valid;
@@ -26,24 +26,25 @@ public class UserController {
 
     @GetMapping("/{id}")
     @JsonView(Views.UserDetails.class)
-    public User getUserById(@PathVariable Long id) {
+    public User getUserById(@PathVariable("id") Long id) {
         return userService.getUserById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @JsonView(Views.UserSummary.class)
     public User createUser(@Valid @RequestBody User user) {
         return userService.createUser(user);
     }
 
     @PutMapping("/{id}")
-    public User updateUser(@PathVariable Long id, @Valid @RequestBody User user) {
+    public User updateUser(@PathVariable("id") Long id, @Valid @RequestBody User user) {
         return userService.updateUser(id, user);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUser(@PathVariable Long id) {
+    public void deleteUser(@PathVariable("id") Long id) {
         userService.deleteUser(id);
     }
 }
