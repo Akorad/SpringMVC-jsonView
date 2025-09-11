@@ -5,8 +5,8 @@ import org.Akorad.dto.OrderResponseDto;
 import org.Akorad.entity.Order;
 
 public interface OrderService {
-    OrderResponseDto placeOrder(CreateOrderRequest req);
-    OrderResponseDto  getById(Long id);
-    OrderResponseDto updateOrder(Long id, CreateOrderRequest request);
+    Order placeOrder(CreateOrderRequest req);
+    Order  getById(Long id);
+    Order updateOrder(Long id, CreateOrderRequest request);
     void deleteOrder(Long id);
 }

@@ -35,7 +35,7 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    public OrderResponseDto getById(@PathVariable Long id) {
+    public OrderResponseDto getById(@PathVariable("id") Long id) {
         Order order = orderService.getById(id);
         OrderResponseDto resp = objectMapper.convertValue(order, OrderResponseDto.class);
         resp.setProducts(order.getProducts().stream()
@@ -45,15 +45,15 @@ public class OrderController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<OrderResponseDto> updateOrder(
-            @PathVariable Long id,
+    public ResponseEntity<Order> updateOrder(
+            @PathVariable("id") Long id,
             @Valid @RequestBody CreateOrderRequest request
     ) {
         return ResponseEntity.ok(orderService.updateOrder(id, request));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteOrder(@PathVariable("id") Long id) {
         orderService.deleteOrder(id);
         return ResponseEntity.noContent().build();
     }

@@ -28,12 +28,13 @@ public class OrderServiceImpl implements OrderService{
     private final ProductRepository productRepository;
     private final CustomerRepository customerRepository;
     private final OrderRepository orderRepository;
-    private final ObjectMapper objectMapper; // explicit use
+    private final ObjectMapper objectMapper;
+    private final CustomerService customerService;
 
     @Override
     @Transactional
-    public OrderResponseDto placeOrder(CreateOrderRequest req) {
-        Customer customer = objectMapper.convertValue(req.getCustomer(), Customer.class);
+    public Order placeOrder(CreateOrderRequest req) {
+        Customer customer = customerService.getCustomerById(req.getCustomer().getId());
         Customer savedCustomer = customerRepository.save(customer);
 
         Order order = new Order();
@@ -63,12 +64,41 @@ public class OrderServiceImpl implements OrderService{
         order.setProducts(orderedProducts);
         order.setTotalPrice(total);
 
-        return OrderResponseDto.fromEntity(orderRepository.save(order));
+        return orderRepository.save(order);
     }
 
     @Override
-    public OrderResponseDto  getById(Long id) {
+    public Order getById(Long id) {
             return orderRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("Order not found: " + id));
+    }
+
+    @Override
+    public Order updateOrder(Long id, CreateOrderRequest request) {
+        Customer customer = customerService.getCustomerById(request.getCustomer().getId());
+        List<Product> products = productRepository.findAllById(request.getProductIds());
+
+        if (products.isEmpty()){
+            throw new ResourceNotFoundException("No products found for the given IDs");
+        }
+
+        BigDecimal totalPrice = products.stream()
+                .map(Product::getPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        Order order = (id==null) ? new Order() : getById(id);
+        order.setCustomer(customer);
+        order.setProducts(products);
+        order.setOrderDate(LocalDateTime.now());
+        order.setShippingAddress(request.getShippingAddress());
+        order.setTotalPrice(totalPrice);
+        order.setOrderStatus(OrderStatus.NEW);
+        return orderRepository.save(order);
+    }
+
+    @Override
+    public void deleteOrder(Long id) {
+        Order order = getById(id);
+        orderRepository.delete(order);
     }
 }
