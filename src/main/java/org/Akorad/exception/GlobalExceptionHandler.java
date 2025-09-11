@@ -16,6 +16,13 @@ public class GlobalExceptionHandler {
                 .body("Resource not found: " + ex.getMessage());
     }
 
+    @ExceptionHandler(InsufficientStockException.class)
+    public ResponseEntity<String> insufficientStockException(InsufficientStockException ex) {
+        return ResponseEntity
+                .status(HttpStatus.CONTINUE)
+                .body("Conflict: " + ex.getMessage());
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleValidationException(MethodArgumentNotValidException ex) {
         return ResponseEntity
