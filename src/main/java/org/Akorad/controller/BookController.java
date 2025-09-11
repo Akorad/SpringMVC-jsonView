@@ -2,6 +2,7 @@ package org.Akorad.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.RequiredArgsConstructor;
+import org.Akorad.dto.BookPageDto;
 import org.Akorad.dto.Views;
 import org.Akorad.entity.Book;
 import org.Akorad.service.BookService;
@@ -17,11 +18,27 @@ public class BookController {
 
     private final BookService bookService;
 
+
+    //Отдает пустой JSON
+//    @GetMapping
+//    @ResponseStatus(HttpStatus.OK)
+//    @JsonView(Views.AuthorDetails.class)
+//    public Page<Book> getAllBooks(Pageable pageable) {
+//        return bookService.getAllBooks(pageable);
+//    }
+
+
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     @JsonView(Views.AuthorDetails.class)
-    public Page<Book> getAllBooks(Pageable pageable) {
-        return bookService.getAllBooks(pageable);
+    public BookPageDto getAllBooks(Pageable pageable) {
+        Page<Book> page = bookService.getAllBooks(pageable);
+        return new BookPageDto(
+                page.getContent(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.getNumber(),
+                page.getSize()
+        );
     }
 
     // Получение книги по id

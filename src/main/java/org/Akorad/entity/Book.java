@@ -1,6 +1,8 @@
 package org.Akorad.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -10,6 +12,7 @@ import org.Akorad.dto.Views;
 @Entity
 @Getter
 @Setter
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Book {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
@@ -26,5 +29,6 @@ public class Book {
 
     @ManyToOne
     @JoinColumn(name = "author_id")
+    @JsonView({Views.AuthorDetails.class})
     private Author author;
 }
