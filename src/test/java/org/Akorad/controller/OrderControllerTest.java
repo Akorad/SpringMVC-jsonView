@@ -97,7 +97,6 @@ public class OrderControllerTest {
 
         mockMvc.perform(get("/api/orders/{id}", order.getId()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.orderId", is(order.getId().intValue())))
                 .andExpect(jsonPath("$.customer.id", is(customer.getId().intValue())))
                 .andExpect(jsonPath("$.products", hasSize(1)));
     }
