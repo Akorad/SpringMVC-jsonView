@@ -19,27 +19,26 @@ public class BookController {
     private final BookService bookService;
 
 
-    //Отдает пустой JSON
-//    @GetMapping
-//    @ResponseStatus(HttpStatus.OK)
-//    @JsonView(Views.AuthorDetails.class)
-//    public Page<Book> getAllBooks(Pageable pageable) {
-//        return bookService.getAllBooks(pageable);
-//    }
-
-
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     @JsonView(Views.AuthorDetails.class)
-    public BookPageDto getAllBooks(Pageable pageable) {
-        Page<Book> page = bookService.getAllBooks(pageable);
-        return new BookPageDto(
-                page.getContent(),
-                page.getTotalElements(),
-                page.getTotalPages(),
-                page.getNumber(),
-                page.getSize()
-        );
+    public Page<Book> getAllBooks(Pageable pageable) {
+        return bookService.getAllBooks(pageable);
     }
+
+
+//    @GetMapping
+//    @JsonView(Views.AuthorDetails.class)
+//    public BookPageDto getAllBooks(Pageable pageable) {
+//        Page<Book> page = bookService.getAllBooks(pageable);
+//        return new BookPageDto(
+//                page.getContent(),
+//                page.getTotalElements(),
+//                page.getTotalPages(),
+//                page.getNumber(),
+//                page.getSize()
+//        );
+//    }
 
     // Получение книги по id
     @GetMapping("/{id}")
