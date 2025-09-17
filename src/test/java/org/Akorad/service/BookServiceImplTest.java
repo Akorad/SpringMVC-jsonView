@@ -1,6 +1,5 @@
 package org.Akorad.service;
 
-import org.Akorad.entity.Author;
 import org.Akorad.entity.Book;
 import org.Akorad.exception.ResourceNotFoundException;
 import org.Akorad.repository.BookRepository;
@@ -20,40 +19,31 @@ public class BookServiceImplTest {
     @Mock
     private BookRepository bookRepository;
 
-    @Mock
-    private AuthorService authorService;
-
     @InjectMocks
     private BookServiceImpl bookService;
 
-    private Author author;
     private Book book;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        author = new Author();
-        author.setId(1L);
-        author.setName("J. K. Rowling");
-
         book = new Book();
         book.setId(1L);
         book.setTitle("Harry Potter");
-        book.setIsbn("1234567890");
-        book.setAuthor(author);
+        book.setPublicationYear(1997);
+        book.setAuthor("J.K. Rowling");
     }
 
     @Test
-    void testGetAllBooks_ReturnsPage() {
-        Page<Book> page = new PageImpl<>(List.of(book));
-        when(bookRepository.findAll(any(Pageable.class))).thenReturn(page);
+    void testGetAllBooks_ReturnsList() {
+        when(bookRepository.findAll()).thenReturn(List.of(book));
 
-        Page<Book> result = bookService.getAllBooks(PageRequest.of(0, 10));
+        List<Book> result = bookService.getAllBooks();
 
-        assertThat(result.getContent()).hasSize(1);
-        assertThat(result.getContent().get(0).getTitle()).isEqualTo("Harry Potter");
-        verify(bookRepository, times(1)).findAll(any(Pageable.class));
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getTitle()).isEqualTo("Harry Potter");
+        verify(bookRepository, times(1)).findAll();
     }
 
     @Test
@@ -70,10 +60,8 @@ public class BookServiceImplTest {
     void testSaveBook_Success() {
         when(bookRepository.save(book)).thenReturn(book);
 
-        Book result = bookService.saveBook(book);
+        bookService.saveBook(book);
 
-        assertThat(result).isNotNull();
-        assertThat(result.getIsbn()).isEqualTo("1234567890");
         verify(bookRepository, times(1)).save(book);
     }
 
@@ -81,34 +69,33 @@ public class BookServiceImplTest {
     void testUpdateBook_Success() {
         Book updatedBook = new Book();
         updatedBook.setTitle("New Title");
-        updatedBook.setIsbn("9876543210");
-        updatedBook.setAuthor(author);
+        updatedBook.setPublicationYear(1852);
+        updatedBook.setAuthor("author");
 
         when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
-        when(authorService.getAuthorById(author.getId())).thenReturn(author);
-        when(bookRepository.save(any(Book.class))).thenReturn(book);
+        when(bookRepository.update(any(Book.class))).thenReturn(book);
 
-        Book result = bookService.updateBook(1L, updatedBook);
+        bookService.updateBook(1L, updatedBook);
 
-        assertThat(result.getTitle()).isEqualTo("New Title");
-        assertThat(result.getIsbn()).isEqualTo("9876543210");
-        assertThat(result.getAuthor()).isEqualTo(author);
-        verify(bookRepository, times(1)).save(book);
+        assertThat(book.getTitle()).isEqualTo("New Title");
+        assertThat(book.getPublicationYear()).isEqualTo(1852);
+        assertThat(book.getAuthor()).isEqualTo("author");
+        verify(bookRepository, times(1)).update(book);
     }
 
     @Test
     void testDeleteBook_Success() {
         when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
-        doNothing().when(bookRepository).delete(book);
+        when(bookRepository.delete(1L)).thenReturn(1);
 
         bookService.deleteBook(1L);
 
-        verify(bookRepository, times(1)).delete(book);
+        verify(bookRepository, times(1)).delete(1L);
     }
 
     @Test
     void testGetBookById_NotFound() {
-        when(bookRepository.findById(2L)).thenReturn(Optional.empty());
+        when(bookRepository.delete(2L)).thenReturn(0);
 
         assertThrows(ResourceNotFoundException.class, () -> bookService.getBookById(2L));
     }
@@ -117,8 +104,8 @@ public class BookServiceImplTest {
     void testUpdateBook_NotFound() {
         Book updatedBook = new Book();
         updatedBook.setTitle("New Title");
-        updatedBook.setIsbn("9876543210");
-        updatedBook.setAuthor(author);
+        updatedBook.setPublicationYear(1999);
+        updatedBook.setAuthor("author");
 
         when(bookRepository.findById(2L)).thenReturn(Optional.empty());
 

@@ -1,34 +1,22 @@
 package org.Akorad.entity;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
-import org.Akorad.dto.Views;
+import org.springframework.data.annotation.Id;
 
-@Entity
 @Getter
 @Setter
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Book {
     @Id
-    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    @JsonView({Views.AuthorDetails.class})
     private Long id;
 
-    @NotBlank(message = "Title is mandatory")
-    @JsonView({Views.AuthorDetails.class})
+    @NotBlank(message = "Название не может быть пустым")
     private String title;
 
-    @NotBlank(message = "ISBN is mandatory")
-    @JsonView({Views.AuthorDetails.class})
-    private String isbn;
+    @NotBlank(message = "Автор не может быть пустым")
+    private String author;
 
-    @ManyToOne
-    @JoinColumn(name = "author_id")
-    @JsonView({Views.AuthorDetails.class})
-    private Author author;
+    @NotBlank(message = "Год публикации не может быть пустым")
+    private Integer publicationYear;
 }

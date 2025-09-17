@@ -1,15 +1,12 @@
 package org.Akorad.controller;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import lombok.RequiredArgsConstructor;
-import org.Akorad.dto.BookPageDto;
-import org.Akorad.dto.Views;
 import org.Akorad.entity.Book;
 import org.Akorad.service.BookService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/books")
@@ -21,29 +18,13 @@ public class BookController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    @JsonView(Views.AuthorDetails.class)
-    public Page<Book> getAllBooks(Pageable pageable) {
-        return bookService.getAllBooks(pageable);
+    public List<Book> getAllBooks() {
+        return bookService.getAllBooks();
     }
-
-
-//    @GetMapping
-//    @JsonView(Views.AuthorDetails.class)
-//    public BookPageDto getAllBooks(Pageable pageable) {
-//        Page<Book> page = bookService.getAllBooks(pageable);
-//        return new BookPageDto(
-//                page.getContent(),
-//                page.getTotalElements(),
-//                page.getTotalPages(),
-//                page.getNumber(),
-//                page.getSize()
-//        );
-//    }
 
     // Получение книги по id
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @JsonView(Views.AuthorDetails.class)
     public Book getBookById(@PathVariable("id") Long id) {
         return bookService.getBookById(id);
     }
@@ -51,7 +32,6 @@ public class BookController {
     // Создание новой книги
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @JsonView(Views.AuthorDetails.class)
     public Book createBook(@RequestBody Book book) {
         return bookService.saveBook(book);
     }
@@ -59,7 +39,6 @@ public class BookController {
     // Обновление книги
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @JsonView(Views.AuthorDetails.class)
     public Book updateBook(@PathVariable("id") Long id, @RequestBody Book book) {
         return bookService.updateBook(id, book);
     }

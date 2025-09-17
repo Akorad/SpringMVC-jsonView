@@ -4,45 +4,48 @@ import lombok.RequiredArgsConstructor;
 import org.Akorad.entity.Book;
 import org.Akorad.exception.ResourceNotFoundException;
 import org.Akorad.repository.BookRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
-    private final AuthorService authorService;
 
     @Override
-    public Page<Book> getAllBooks(Pageable pageable) {
-        return bookRepository.findAll(pageable);
+    public List<Book> getAllBooks() {
+        return bookRepository.findAll();
     }
 
     @Override
     public Book getBookById(Long id) {
         return bookRepository.findById(id).
-                orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + id));
+                orElseThrow(() -> new ResourceNotFoundException("Книга не найдена по id: " + id));
     }
 
     @Override
+    @Transactional
     public Book saveBook(Book book) {
         return bookRepository.save(book);
     }
 
     @Override
+    @Transactional
     public Book updateBook(Long id, Book book) {
         Book bookToUpdate = getBookById(id);
         bookToUpdate.setTitle(book.getTitle());
-        bookToUpdate.setIsbn(book.getIsbn());
-        bookToUpdate.setAuthor(authorService.getAuthorById(book.getAuthor().getId()));
-        return bookRepository.save(bookToUpdate);
+        bookToUpdate.setAuthor(book.getAuthor());
+        bookToUpdate.setPublicationYear(book.getPublicationYear());
+        return bookRepository.update(bookToUpdate);
     }
 
     @Override
+    @Transactional
     public void deleteBook(Long id) {
         Book book = getBookById(id);
-        bookRepository.delete(book);
+        bookRepository.delete(id);
     }
 }

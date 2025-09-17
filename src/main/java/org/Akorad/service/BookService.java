@@ -1,11 +1,11 @@
 package org.Akorad.service;
 
 import org.Akorad.entity.Book;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 public interface BookService {
-    Page<Book> getAllBooks(Pageable pageable);
+    List<Book> getAllBooks();
     Book getBookById(Long id);
     Book saveBook (Book book);
     Book updateBook(Long id, Book book);
