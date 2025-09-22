@@ -2,6 +2,7 @@ package org.Akorad.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
@@ -22,10 +23,7 @@ public class SecurityConfig {
                     .requestMatchers("/home").permitAll() // Public endpoints
                     .anyRequest().authenticated() // All other endpoints require authentication
                 )
-                .formLogin(from -> from
-                    .loginPage("/login") // Custom login page
-                    .permitAll()
-                )
+                .formLogin(Customizer.withDefaults())
                 .logout(LogoutConfigurer::permitAll);
         return http.build();
     }
