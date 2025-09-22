@@ -15,6 +15,9 @@ spring:
     mapper:
       default-view-inclusion: true
 
+jwt:
+  secret: TtBGyKqHCqhRvC6ynQsCGzgZ8nVmgP5nCr95n5VdDDEYaJpSDpvAdzmaIFoLdlv6
+
 server:
   port: 8080
 

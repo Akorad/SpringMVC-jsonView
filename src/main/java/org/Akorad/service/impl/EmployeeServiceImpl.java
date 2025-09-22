@@ -1,10 +1,11 @@
-package org.Akorad.service;
+package org.Akorad.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.Akorad.entity.Employee;
 import org.Akorad.exception.ResourceNotFoundException;
 import org.Akorad.projection.EmployeeProjection;
 import org.Akorad.repository.EmployeeRepository;
+import org.Akorad.service.EmployeeService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

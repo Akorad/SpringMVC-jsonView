@@ -1,9 +1,10 @@
-package org.Akorad.service;
+package org.Akorad.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.Akorad.entity.Department;
 import org.Akorad.exception.ResourceNotFoundException;
 import org.Akorad.repository.DepartmentRepository;
+import org.Akorad.service.DepartmentService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
