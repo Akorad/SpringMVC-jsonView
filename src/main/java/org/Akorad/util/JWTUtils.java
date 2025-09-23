@@ -32,6 +32,7 @@ public class JWTUtils {
     private static final Long REFRESH_EXPIRATION_TIME = 7*24*60*60*1000L;
 
     public JWTUtils() {
+        secret = "TtBGyKqHCqhRvC6ynQsCGzgZ8nVmgP5nCr95n5VdDDEYaJpSDpvAdzmaIFoLdlv6";
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes());
     }
 

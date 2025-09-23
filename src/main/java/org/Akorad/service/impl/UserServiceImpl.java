@@ -63,14 +63,4 @@ public class UserServiceImpl implements UserService {
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
-
-    @Override
-    public User getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
-            String currentUsername = authentication.getName();
-            return getUserByUsername(currentUsername);
-        }
-        return null;
-    }
 }

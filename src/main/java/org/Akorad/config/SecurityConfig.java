@@ -47,7 +47,7 @@ public class SecurityConfig {
                 .formLogin(Customizer.withDefaults())
                 .logout(LogoutConfigurer::permitAll);
 
-        http.addFilterBefore(loggingFilter, OncePerRequestFilter.class);
+        http.addFilterBefore(loggingFilter, UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
 
