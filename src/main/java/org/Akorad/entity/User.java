@@ -27,4 +27,5 @@ public class User {
     private Boolean isAccountNonLocked = true;
 
     private Integer failedAttempt = 0;
+
 }

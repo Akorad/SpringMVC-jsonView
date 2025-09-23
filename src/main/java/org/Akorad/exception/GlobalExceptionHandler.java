@@ -22,5 +22,19 @@ public class GlobalExceptionHandler {
                 .badRequest()
                 .body(ex.getBindingResult().getAllErrors());
     }
+
+    @ExceptionHandler(InvalidRefreshTokenException.class)
+    public ResponseEntity<String> handleInvalidRefreshTokenException(InvalidRefreshTokenException ex) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body("Invalid refresh token: " + ex.getMessage());
+    }
+
+    @ExceptionHandler(AccountLockedException.class)
+    public ResponseEntity<String> handleAccountLockedException(AccountLockedException ex) {
+        return ResponseEntity
+                .status(HttpStatus.LOCKED)
+                .body("Account is locked: " + ex.getMessage());
+    }
 }
 

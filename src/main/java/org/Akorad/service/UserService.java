@@ -11,6 +11,4 @@ public interface UserService {
     public void deleteUser(Long id);
     public User getUserByUsername(String username);
     public List<User> getAllUsers();
-
-    public User getCurrentUser();
 }

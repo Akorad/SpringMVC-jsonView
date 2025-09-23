@@ -3,12 +3,14 @@ package org.Akorad.service.security.impl;
 import lombok.RequiredArgsConstructor;
 import org.Akorad.entity.RefreshToken;
 import org.Akorad.entity.User;
+import org.Akorad.exception.InvalidRefreshTokenException;
 import org.Akorad.repository.RefreshTokenRepository;
 import org.Akorad.service.security.RefreshTokenService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +28,10 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         token.setToken(java.util.UUID.randomUUID().toString());
         token.setExpiryDate(Instant.now().plusMillis(refreshTtl));
         return refreshTokenRepository.save(token);
+    }
+
+    public Optional<RefreshToken> findByToken(String token) {
+        return refreshTokenRepository.findByToken(token);
     }
 
     @Override

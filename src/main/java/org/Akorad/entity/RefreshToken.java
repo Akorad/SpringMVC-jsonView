@@ -19,7 +19,7 @@ public class RefreshToken {
     @Column(nullable = false, unique = true)
     private String token;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 

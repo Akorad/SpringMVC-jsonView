@@ -5,6 +5,8 @@ import org.Akorad.dto.AuthRequest;
 import org.Akorad.dto.AuthResponse;
 import org.Akorad.entity.RefreshToken;
 import org.Akorad.entity.User;
+import org.Akorad.exception.AccountLockedException;
+import org.Akorad.exception.InvalidRefreshTokenException;
 import org.Akorad.service.UserService;
 import org.Akorad.service.security.AuthAuditService;
 import org.Akorad.service.security.AuthService;
@@ -19,8 +21,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
-
-import javax.security.auth.login.AccountLockedException;
 
 @Service
 @RequiredArgsConstructor
@@ -66,6 +66,41 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthResponse refreshToken(String refreshToken, String ipAddress) {
-        return null;
+        RefreshToken token = refreshTokenService.findByToken(refreshToken)
+                .orElseThrow(()-> new InvalidRefreshTokenException("Invalid refresh token"));
+        if (refreshTokenService.isExpired(token)) {
+            auditService.logEvent(token.getUser().getUsername(), "REFRESH_TOKEN_EXPIRED", ipAddress);
+            throw new InvalidRefreshTokenException("Refresh token is expired");
+        }
+
+        User user = token.getUser();
+        UserDetails ud = userDetailsService.loadUserByUsername(user.getUsername());
+        String newAccessToken = jwtUtils.generateToken(ud);
+        auditService.logEvent(user.getUsername(), "REFRESH_TOKEN_SUCCESS", ipAddress);
+        return new AuthResponse(newAccessToken, refreshToken);
+    }
+
+    @Override
+    public AuthResponse register(AuthRequest authRequest, String ipAddress) {
+        User createdUser = new User();
+        createdUser.setUsername(authRequest.username());
+        createdUser.setPassword(authRequest.password());
+
+        User newUser = userService.createUser(createdUser);
+
+        UserDetails ud = userDetailsService.loadUserByUsername(newUser.getUsername());
+        String accessToken = jwtUtils.generateToken(ud);
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(newUser);
+        auditService.logEvent(newUser.getUsername(), "REGISTER_SUCCESS", ipAddress);
+        return new AuthResponse(accessToken, refreshToken.getToken());
+    }
+
+    @Override
+    public void logoutAllSessions(String refreshToken, String ipAddress) {
+        RefreshToken token = refreshTokenService.findByToken(refreshToken)
+                .orElseThrow(()-> new InvalidRefreshTokenException("Invalid refresh token"));
+        User user = token.getUser();
+        refreshTokenService.deleteByUserId(user.getId());
+        auditService.logEvent(user.getUsername(), "LOGOUT_ALL_SESSIONS", ipAddress);
     }
 }
