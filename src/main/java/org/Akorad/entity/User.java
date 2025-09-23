@@ -2,7 +2,6 @@ package org.Akorad.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.Id;
 
 @Entity

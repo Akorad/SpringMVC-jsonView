@@ -3,7 +3,6 @@ package org.Akorad.service.security.impl;
 import lombok.RequiredArgsConstructor;
 import org.Akorad.entity.RefreshToken;
 import org.Akorad.entity.User;
-import org.Akorad.exception.InvalidRefreshTokenException;
 import org.Akorad.repository.RefreshTokenRepository;
 import org.Akorad.service.security.RefreshTokenService;
 import org.springframework.beans.factory.annotation.Value;
