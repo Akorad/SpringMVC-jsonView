@@ -58,6 +58,12 @@
             <artifactId>lombok</artifactId>
             <version>1.18.40</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.13.0</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

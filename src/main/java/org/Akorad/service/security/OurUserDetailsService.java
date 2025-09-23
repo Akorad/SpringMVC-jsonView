@@ -1,7 +1,8 @@
-package org.Akorad.service;
+package org.Akorad.service.security;
 
 import lombok.RequiredArgsConstructor;
 import org.Akorad.entity.User;
+import org.Akorad.service.UserService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

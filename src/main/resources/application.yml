@@ -17,6 +17,7 @@ spring:
 
 jwt:
   secret: TtBGyKqHCqhRvC6ynQsCGzgZ8nVmgP5nCr95n5VdDDEYaJpSDpvAdzmaIFoLdlv6
+  refresh-expiration-ms: 604800000 # 7 days
 
 server:
   port: 8080

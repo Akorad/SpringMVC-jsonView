@@ -22,7 +22,6 @@ public class User {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @ColumnDefault("'USER'")
     private Role role;
 
     private Boolean isAccountNonLocked = true;

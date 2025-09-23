@@ -1,8 +1,9 @@
 package org.Akorad.config;
 
 import lombok.RequiredArgsConstructor;
-import org.Akorad.service.OurUserDetailsService;
-import org.springframework.beans.factory.annotation.Value;
+import org.Akorad.filter.JwtAuthenticationFilter;
+import org.Akorad.service.security.OurUserDetailsService;
+import org.Akorad.filter.LoggingFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,23 +15,20 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.crypto.SecretKey;
 
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
 
     private final OurUserDetailsService userDetailsService;
-    private final JwtAutenticationFilter jwtAuthFilter;
-    private final LogingFilter logingFilter;
+    private final JwtAuthenticationFilter jwtAuthFilter;
+    private final LoggingFilter loggingFilter;
 
 
     @Bean
@@ -48,6 +46,11 @@ public class SecurityConfig {
                 )
                 .formLogin(Customizer.withDefaults())
                 .logout(LogoutConfigurer::permitAll);
+
+        http.addFilterBefore(loggingFilter, OncePerRequestFilter.class);
+        http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+
         return http.build();
     }
 
@@ -67,10 +70,5 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
-    }
-
-    @Bean
-    public SecretKey jwtSecretKey(@Value("${jwt.secret}") String jwtSecret) {
-        return io.jsonwebtoken.security.Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
 }
