@@ -1,7 +1,6 @@
 package org.Akorad.service.security;
 
 import org.Akorad.entity.RefreshToken;
-import org.Akorad.entity.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.HashMap;
