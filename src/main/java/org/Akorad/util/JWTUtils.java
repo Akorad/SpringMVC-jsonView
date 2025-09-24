@@ -82,7 +82,7 @@ public class JWTUtils {
         final Claims claims = Jwts.parser()
                 .verifyWith(secretKey)
                 .build()
-                .parseEncryptedClaims(token)
+                .parseSignedClaims(token)
                 .getPayload();
         return claimsTFunction.apply(claims);
     }

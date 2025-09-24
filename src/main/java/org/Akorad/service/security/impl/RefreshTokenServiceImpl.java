@@ -4,11 +4,15 @@ import lombok.RequiredArgsConstructor;
 import org.Akorad.entity.RefreshToken;
 import org.Akorad.entity.User;
 import org.Akorad.repository.RefreshTokenRepository;
+import org.Akorad.service.UserService;
 import org.Akorad.service.security.RefreshTokenService;
+import org.Akorad.util.JWTUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.Optional;
 
 @Service
@@ -19,12 +23,14 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     private long refreshTtl;
 
     private final RefreshTokenRepository refreshTokenRepository;
+    private final UserService userService;
+    private final JWTUtils jwtUtils;
 
     @Override
-    public RefreshToken createRefreshToken(User user) {
+    public RefreshToken createRefreshToken(HashMap<String, Object> claims, UserDetails userDetails) {
         RefreshToken token = new RefreshToken();
-        token.setUser(user);
-        token.setToken(java.util.UUID.randomUUID().toString());
+        token.setUser(userService.getUserByUsername(userDetails.getUsername()));
+        token.setToken(jwtUtils.generateRefreshToken(claims, userDetails));
         token.setExpiryDate(Instant.now().plusMillis(refreshTtl));
         return refreshTokenRepository.save(token);
     }

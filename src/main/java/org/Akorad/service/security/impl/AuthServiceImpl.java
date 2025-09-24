@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.Akorad.dto.AuthRequest;
 import org.Akorad.dto.AuthResponse;
 import org.Akorad.entity.RefreshToken;
+import org.Akorad.entity.Role;
 import org.Akorad.entity.User;
 import org.Akorad.exception.AccountLockedException;
 import org.Akorad.exception.InvalidRefreshTokenException;
+import org.Akorad.exception.ResourceNotFoundException;
 import org.Akorad.service.UserService;
 import org.Akorad.service.security.AuthAuditService;
 import org.Akorad.service.security.AuthService;
@@ -20,7 +22,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +38,7 @@ public class AuthServiceImpl implements AuthService {
     private final FailedLoginService failedLoginService;
     private final RefreshTokenService refreshTokenService;
     private final AuthAuditService auditService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public AuthResponse login(AuthRequest authRequest, String ipAddress) {
@@ -48,8 +54,13 @@ public class AuthServiceImpl implements AuthService {
             User user = userService.getUserByUsername(ud.getUsername());
 
             String accessToken = jwtUtils.generateToken(ud);
+            HashMap<String, Object> claims = new HashMap<>();
+            claims.put("role", ud.getAuthorities()
+                    .stream()
+                    .map(Object::toString)
+                    .toList());
 
-            RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(claims, ud);
 
             auditService.logEvent(authRequest.username(), "LOGIN_SUCCESS", ipAddress);
 
@@ -84,13 +95,28 @@ public class AuthServiceImpl implements AuthService {
     public AuthResponse register(AuthRequest authRequest, String ipAddress) {
         User createdUser = new User();
         createdUser.setUsername(authRequest.username());
-        createdUser.setPassword(authRequest.password());
+        createdUser.setPassword(passwordEncoder.encode(authRequest.password()));
+        createdUser.setRole(Role.USER);
+
+        try {
+            if(userService.getUserByUsername(createdUser.getUsername()) != null) {
+                auditService.logEvent(createdUser.getUsername(), "REGISTER_FAILED_USER_EXISTS", ipAddress);
+                throw new IllegalArgumentException("Username is already taken");
+            }
+        } catch (ResourceNotFoundException _){
+        }
+
 
         User newUser = userService.createUser(createdUser);
 
         UserDetails ud = userDetailsService.loadUserByUsername(newUser.getUsername());
         String accessToken = jwtUtils.generateToken(ud);
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(newUser);
+        HashMap<String, Object> claims = new HashMap<>();
+        claims.put("role", ud.getAuthorities()
+                .stream()
+                .map(Object::toString)
+                .toList());
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(claims,ud);
         auditService.logEvent(newUser.getUsername(), "REGISTER_SUCCESS", ipAddress);
         return new AuthResponse(accessToken, refreshToken.getToken());
     }
