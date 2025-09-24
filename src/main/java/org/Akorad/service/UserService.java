@@ -3,6 +3,7 @@ package org.Akorad.service;
 import org.Akorad.entity.User;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
     User createUser(User user);
@@ -11,4 +12,8 @@ public interface UserService {
     void deleteUser(Long id);
     User getUserByUsername(String username);
     List<User> getAllUsers();
+
+    User getCurrentUser();
+
+    Optional<User> getUserByEmail(String email);
 }

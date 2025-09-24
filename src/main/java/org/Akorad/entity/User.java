@@ -1,6 +1,7 @@
 package org.Akorad.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.*;
 
 @Entity
@@ -21,6 +22,10 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Email
+    @Column(unique = true, nullable = true)
+    private String email;
 
     private Boolean isAccountNonLocked = true;
 

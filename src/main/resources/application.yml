@@ -14,6 +14,14 @@ spring:
   jackson:
     mapper:
       default-view-inclusion: true
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: Ov23liZS3PslXNnDxjTU
+            client-secret: f8d6cd83caba2807dee0c91cd5ec4da9cb6b62ec
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
 
 jwt:
   secret: "TtBGyKqHCqhRvC6ynQsCGzgZ8nVmgP5nCr95n5VdDDEYaJpSDpvAdzmaIFoLdlv6"
