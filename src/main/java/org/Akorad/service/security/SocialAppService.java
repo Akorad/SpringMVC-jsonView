@@ -38,6 +38,7 @@ public class SocialAppService implements OAuth2UserService<OAuth2UserRequest, OA
             newUser.setEmail(email);
             newUser.setPassword(UUID.randomUUID().toString());
             newUser.setRole(USER);
+            auditService.logEvent(newUser.getUsername(), "SOCIAL_REGISTER", "New user registered via social provider");
             return userService.createUser(newUser);
         });
 

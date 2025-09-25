@@ -43,10 +43,6 @@ public class AuthController {
         return ResponseEntity.ok("Logged out from all sessions.");
     }
 
-    @GetMapping("/oauth2/login")
-    public ResponseEntity<String> oauth2Login() {
-        return ResponseEntity.ok("OAuth2 login endpoint. Please use the frontend to initiate OAuth2 login.");
-    }
 
 
 }
